@@ -1,67 +1,77 @@
-import  { useState, ChangeEvent, FormEvent } from 'react';
-
+import { useForm } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
 interface FormData {
   username: string;
   email: string;
-  password:string;
+  password: string;
 }
-
-function RegularForm() {
-  const [formData, setFormData] = useState<FormData>({
-    username: '',
-    email: '',
-    password: '',
-  });
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+export function HookForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<FormData>();
+  const onSubmit = (data: FormData) => {
+    alert(JSON.stringify(data));
+    reset();
   };
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    alert(JSON.stringify(formData));
-  };
-
   return (
-    <form onSubmit={handleSubmit}>
-        <h1>Change Me To React Hook Form</h1>
-      <div>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          placeholder='Enter UserName'
-          value={formData.username}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <input
-          type="text"
-          id="email"
-          name="email"
-          placeholder='Enter Email'
-          value={formData.email}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <input
-          type="text"
-          id="password"
-          name="password"
-          placeholder='Enter Password'
-          value={formData.password}
-          onChange={handleChange}
-        />
-      </div>
-      <button type="submit">Submit</button>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <h1>React Hook Form</h1>
+      <input
+        {...register("username", {
+          required: "username is required",
+          minLength: { value: 2, message: "Password is must 2" },
+        })}
+        placeholder="username"
+      />
+      <ErrorMessage errors={errors} name="username" />
+      <ErrorMessage
+        errors={errors}
+        name="username"
+        render={({ message }) => <p>{message}</p>}
+      />
+      <input
+        {...register("email", { required: "email is required" })}
+        type="email"
+        placeholder="Email"
+      />
+      <ErrorMessage errors={errors} name="email" />
+      <ErrorMessage
+        errors={errors}
+        name="email"
+        render={({ message }) => <p>{message}</p>}
+      />
+      <input
+        {...register("password", {
+          required: "password is required",
+          minLength: {
+            value: 8,
+            message: "min 8 ",
+          },
+          maxLength: {
+            value: 20,
+            message: "max 20",
+          },
+          pattern: {
+            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=]).*$/,
+            message:
+              "Must contain uppercase letter lowercase letter minimum 8 characters and maximum 20(@#$%^&+=)",
+          },
+        })}
+        type="password"
+        placeholder="Password"
+      />
+      <ErrorMessage errors={errors} name="password" />
+      <ErrorMessage
+        errors={errors}
+        name="password"
+        render={({ message }) => <p>{message}</p>}
+      />
+      <button disabled={isSubmitting} type="submit">
+        Submit
+      </button>
     </form>
   );
 }
-
-export default RegularForm;

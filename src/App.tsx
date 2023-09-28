@@ -1,13 +1,12 @@
-import './App.css'
-import RegularForm from './components/RegularForm'
+import "./App.css";
+import { HookForm } from "./components/RegularForm";
 
 function App() {
-
   return (
     <>
-    <RegularForm />
+      <HookForm />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
